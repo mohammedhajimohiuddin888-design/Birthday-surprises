@@ -1,0 +1,979 @@
+/*
+ * Tailwind v4 entry: config lives here, with no tailwind.config.js or PostCSS plugin.
+ * - Keep every @import in this top block, above @theme and the rest of the file. Install an
+ *   npm package before @importing its CSS. Never @import a remote URL (web fonts, CDN CSS): the
+ *   build resolves @import from the filesystem. Load those with a <link> in the head() of
+ *   src/routes/__root.tsx and name the family in a --font-* token in @theme inline below.
+ */
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system definition.
+ *
+ * The design lives in this file: oklch color tokens on the shadcn variables
+ * (--background, --foreground, --primary, --secondary, --muted, --accent, ...) plus
+ * new tokens as needed, font tokens, and custom styles and animations.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --font-display: "Lilita One", cursive;
+  --font-body: "DM Sans", sans-serif;
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.129 0.042 264.695);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.129 0.042 264.695);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.129 0.042 264.695);
+  --primary: oklch(0.208 0.042 265.755);
+  --primary-foreground: oklch(0.984 0.003 247.858);
+  --secondary: oklch(0.968 0.007 247.896);
+  --secondary-foreground: oklch(0.208 0.042 265.755);
+  --muted: oklch(0.968 0.007 247.896);
+  --muted-foreground: oklch(0.554 0.046 257.417);
+  --accent: oklch(0.968 0.007 247.896);
+  --accent-foreground: oklch(0.208 0.042 265.755);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(0.929 0.013 255.508);
+  --input: oklch(0.929 0.013 255.508);
+  --ring: oklch(0.704 0.04 256.788);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.984 0.003 247.858);
+  --sidebar-foreground: oklch(0.129 0.042 264.695);
+  --sidebar-primary: oklch(0.208 0.042 265.755);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.968 0.007 247.896);
+  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+  --sidebar-border: oklch(0.929 0.013 255.508);
+  --sidebar-ring: oklch(0.704 0.04 256.788);
+  --birthday-ink: oklch(0.16 0.015 30);
+  --birthday-cream: oklch(0.976 0.022 82);
+  --birthday-pink: oklch(0.83 0.105 350);
+  --birthday-pink-soft: oklch(0.94 0.052 354);
+  --birthday-yellow: oklch(0.87 0.14 84);
+  --birthday-mint: oklch(0.84 0.085 164);
+  --birthday-lilac: oklch(0.83 0.08 300);
+  --birthday-cheek: oklch(0.77 0.12 14);
+  --birthday-cat-fur: oklch(0.4 0.018 30);
+  --birthday-cat-highlight: oklch(0.52 0.02 30);
+  --birthday-flame: oklch(0.78 0.18 52);
+  --birthday-page-shadow: oklch(0.32 0.035 31 / 8%);
+  --birthday-white: oklch(0.998 0.004 82);
+}
+
+.dark {
+  --background: oklch(0.129 0.042 264.695);
+  --foreground: oklch(0.984 0.003 247.858);
+  --card: oklch(0.208 0.042 265.755);
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --popover: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.929 0.013 255.508);
+  --primary-foreground: oklch(0.208 0.042 265.755);
+  --secondary: oklch(0.279 0.041 260.031);
+  --secondary-foreground: oklch(0.984 0.003 247.858);
+  --muted: oklch(0.279 0.041 260.031);
+  --muted-foreground: oklch(0.704 0.04 256.788);
+  --accent: oklch(0.279 0.041 260.031);
+  --accent-foreground: oklch(0.984 0.003 247.858);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.551 0.027 264.364);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.208 0.042 265.755);
+  --sidebar-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.279 0.041 260.031);
+  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.551 0.027 264.364);
+}
+
+@theme inline {
+  --color-birthday-ink: var(--birthday-ink);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+  }
+}
+
+.birthday-page {
+  position: relative;
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  isolation: isolate;
+  background: var(--birthday-cream);
+  font-family: var(--font-body);
+}
+
+.birthday-paper {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(var(--birthday-ink) 0.45px, transparent 0.6px);
+  background-size: 8px 8px;
+  opacity: 0.045;
+}
+
+.birthday-screen {
+  position: relative;
+  width: min(100%, 560px);
+  min-height: min(780px, 100svh);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 42px 28px 30px;
+  text-align: center;
+}
+
+.birthday-welcome {
+  gap: 0;
+}
+
+.birthday-stamp {
+  width: 76px;
+  height: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  border: 1.7px solid var(--birthday-ink);
+  border-radius: 50%;
+  color: var(--birthday-ink);
+  transform: rotate(-9deg);
+}
+
+.birthday-stamp span {
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.birthday-stamp svg {
+  color: var(--birthday-cheek);
+}
+
+.welcome-copy {
+  margin-top: 28px;
+}
+
+.birthday-eyebrow {
+  margin: 0;
+  color: color-mix(in oklch, var(--birthday-ink) 62%, transparent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.welcome-copy h1,
+.cake-message h1,
+.surprise-copy h1 {
+  margin: 10px 0 0;
+  color: var(--birthday-ink);
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.welcome-copy h1 {
+  max-width: 450px;
+  font-size: clamp(2.4rem, 8vw, 3.5rem);
+  line-height: 1.05;
+}
+
+.welcome-subtitle {
+  margin: 12px 0 0;
+  color: color-mix(in oklch, var(--birthday-ink) 68%, transparent);
+  font-size: 15px;
+}
+
+.welcome-form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-top: 34px;
+  text-align: left;
+}
+
+.birthday-type-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--birthday-ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.birthday-type-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+}
+
+.birthday-choice {
+  position: relative;
+  min-width: 0;
+  min-height: 82px;
+  flex-direction: column;
+  gap: 5px;
+  border: 1.5px solid color-mix(in oklch, var(--birthday-ink) 17%, transparent);
+  border-radius: 8px;
+  background: var(--birthday-white);
+  color: var(--birthday-ink);
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 3px 0 color-mix(in oklch, var(--birthday-ink) 7%, transparent);
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.birthday-choice:hover {
+  transform: translateY(-2px);
+}
+
+.birthday-choice--girl.is-selected {
+  border-color: var(--birthday-cheek);
+  background: var(--birthday-pink-soft);
+  box-shadow: 0 3px 0 color-mix(in oklch, var(--birthday-cheek) 27%, transparent);
+}
+
+.birthday-choice--boy.is-selected {
+  border-color: oklch(0.56 0.09 220);
+  background: oklch(0.96 0.035 205);
+  box-shadow: 0 3px 0 oklch(0.56 0.09 220 / 18%);
+}
+
+.choice-emoji {
+  font-size: 25px;
+  line-height: 1;
+}
+
+.choice-check {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 14px;
+  height: 14px;
+  color: var(--birthday-cheek);
+}
+
+.birthday-choice--boy.is-selected .choice-check {
+  color: oklch(0.48 0.1 220);
+}
+
+.name-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.birthday-name-input {
+  height: 50px;
+  border: 1.5px solid color-mix(in oklch, var(--birthday-ink) 17%, transparent);
+  border-radius: 7px;
+  background: var(--birthday-white);
+  color: var(--birthday-ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  box-shadow: 0 3px 0 color-mix(in oklch, var(--birthday-ink) 7%, transparent);
+}
+
+.birthday-name-input::placeholder {
+  color: color-mix(in oklch, var(--birthday-ink) 44%, transparent);
+}
+
+.birthday-name-input:focus-visible {
+  border-color: var(--birthday-cheek);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--birthday-cheek) 19%, transparent);
+}
+
+.celebrate-button {
+  min-height: 52px;
+  border: 1.5px solid var(--birthday-ink);
+  border-radius: 7px;
+  background: var(--birthday-pink);
+  color: var(--birthday-ink);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 400;
+  box-shadow: 0 4px 0 var(--birthday-ink);
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    opacity 150ms ease;
+}
+
+.celebrate-button:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--birthday-ink);
+}
+
+.celebrate-button:not(:disabled):active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--birthday-ink);
+}
+
+.celebrate-button:disabled {
+  background: color-mix(in oklch, var(--birthday-pink) 45%, var(--birthday-white));
+  box-shadow: 0 3px 0 color-mix(in oklch, var(--birthday-ink) 55%, transparent);
+}
+
+.welcome-footer {
+  margin: 30px 0 0;
+  color: color-mix(in oklch, var(--birthday-ink) 52%, transparent);
+  font-size: 11px;
+}
+
+.welcome-footer span,
+.birthday-signoff span {
+  color: var(--birthday-cheek);
+}
+
+.welcome-sparkle {
+  position: absolute;
+  color: var(--birthday-cheek);
+  font-family: var(--font-display);
+  line-height: 1;
+  animation: doodle-float 3.6s ease-in-out infinite;
+}
+
+.welcome-sparkle--left {
+  top: 19%;
+  left: 10%;
+  font-size: 32px;
+}
+
+.welcome-sparkle--right {
+  top: 26%;
+  right: 11%;
+  color: var(--birthday-mint);
+  font-size: 37px;
+  animation-delay: -1.6s;
+}
+
+.birthday-cake-screen {
+  justify-content: center;
+  gap: 8px;
+}
+
+.cake-message h1 {
+  font-size: clamp(1.8rem, 7vw, 2.3rem);
+}
+
+.countdown-number {
+  min-height: 92px;
+  display: grid;
+  place-items: center;
+  color: var(--birthday-ink);
+  font-family: var(--font-display);
+  font-size: 76px;
+  line-height: 1;
+}
+
+.cake-art-wrap {
+  width: min(100%, 350px);
+  margin-top: 5px;
+  animation: cake-float 3.2s ease-in-out infinite;
+}
+
+.birthday-cake-art {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.cake-ground-shadow {
+  fill: var(--birthday-page-shadow);
+}
+
+.cake-plate,
+.cake-plate-inner,
+.cake-body,
+.cake-top,
+.cake-candle {
+  stroke: var(--birthday-ink);
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+
+.cake-plate {
+  fill: var(--birthday-white);
+}
+
+.cake-plate-inner {
+  fill: none;
+  stroke-width: 3;
+}
+
+.cake-body {
+  fill: var(--birthday-pink-soft);
+}
+
+.cake-bottom-icing {
+  fill: var(--birthday-pink);
+  stroke: var(--birthday-ink);
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+
+.cake-top {
+  fill: var(--birthday-white);
+}
+
+.cake-candle-stick,
+.cake-candle-band {
+  fill: none;
+  stroke: var(--birthday-ink);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+}
+
+.cake-candle {
+  fill: var(--birthday-pink);
+}
+
+.cake-candle-band {
+  stroke-width: 2.5;
+}
+
+.candle-flame {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: candle-flicker 0.7s ease-in-out infinite alternate;
+}
+
+.flame-outer {
+  fill: var(--birthday-flame);
+  stroke: var(--birthday-ink);
+  stroke-width: 3.5;
+  stroke-linejoin: round;
+}
+
+.flame-inner {
+  fill: var(--birthday-white);
+}
+
+.is-candle-out .candle-flame {
+  animation: flame-out 250ms ease-in forwards;
+}
+
+.cake-sprinkle {
+  fill: var(--birthday-cheek);
+}
+
+.sprinkle-two {
+  fill: var(--birthday-mint);
+}
+
+.candle-smoke path {
+  fill: none;
+  stroke: color-mix(in oklch, var(--birthday-ink) 34%, transparent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  animation: smoke-rise 1.3s ease-out both;
+}
+
+.candle-smoke path + path {
+  animation-delay: 150ms;
+}
+
+.cake-name-note {
+  margin: 0;
+  color: color-mix(in oklch, var(--birthday-ink) 55%, transparent);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.birthday-surprise-screen {
+  gap: 0;
+  padding-top: 30px;
+  padding-bottom: 32px;
+}
+
+.surprise-topline {
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: color-mix(in oklch, var(--birthday-ink) 55%, transparent);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.surprise-topline svg {
+  color: var(--birthday-cheek);
+}
+
+.character-wrap {
+  z-index: 1;
+  width: min(64vw, 255px);
+  margin-top: 15px;
+  animation: character-bounce 2s ease-in-out infinite;
+}
+
+.birthday-cat {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.cat-shadow {
+  fill: var(--birthday-page-shadow);
+}
+
+.cat-body {
+  fill: var(--birthday-cat-fur);
+  stroke: var(--birthday-ink);
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+
+.cat-face-patch {
+  fill: var(--birthday-cat-highlight);
+  stroke: var(--birthday-ink);
+  stroke-width: 3.5;
+}
+
+.cat-belly {
+  fill: var(--birthday-pink-soft);
+  stroke: var(--birthday-ink);
+  stroke-width: 3.5;
+}
+
+.cat-eye,
+.cat-nose,
+.cat-mouth,
+.cat-whiskers,
+.cat-arm {
+  fill: none;
+  stroke: var(--birthday-ink);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cat-eye {
+  stroke: var(--birthday-white);
+  stroke-width: 5;
+}
+
+.cat-nose {
+  stroke: var(--birthday-pink);
+  stroke-width: 5;
+}
+
+.cat-mouth {
+  stroke: var(--birthday-white);
+  stroke-width: 3;
+}
+
+.cat-whiskers {
+  stroke: color-mix(in oklch, var(--birthday-white) 70%, transparent);
+  stroke-width: 2;
+}
+
+.cat-arm {
+  stroke: var(--birthday-ink);
+  stroke-width: 12;
+}
+
+.cat-bow path,
+.cat-party-hat path:first-child {
+  fill: var(--birthday-pink);
+  stroke: var(--birthday-ink);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+
+.cat-bow circle,
+.cat-party-hat circle {
+  fill: var(--birthday-yellow);
+  stroke: var(--birthday-ink);
+  stroke-width: 3;
+}
+
+.cat-party-hat path:last-child {
+  fill: none;
+  stroke: var(--birthday-white);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.cat-cheek {
+  stroke: var(--birthday-cheek);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.cat-birthday-badge {
+  fill: var(--birthday-yellow);
+  stroke: var(--birthday-ink);
+  stroke-width: 3;
+}
+
+.badge-star {
+  fill: var(--birthday-ink);
+}
+
+.surprise-copy {
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 3px;
+}
+
+.surprise-copy h1 {
+  font-size: clamp(2.3rem, 8vw, 3.2rem);
+  line-height: 1.08;
+}
+
+.surprise-copy h1 span {
+  color: color-mix(in oklch, var(--birthday-cheek) 83%, var(--birthday-ink));
+  overflow-wrap: anywhere;
+}
+
+.birthday-wish {
+  margin: 15px 0 0;
+  color: color-mix(in oklch, var(--birthday-ink) 76%, transparent);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.birthday-signoff {
+  margin: 13px 0 0;
+  color: var(--birthday-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.replay-button {
+  z-index: 1;
+  min-height: 42px;
+  margin-top: 23px;
+  border: 1.5px solid var(--birthday-ink);
+  border-radius: 7px;
+  background: var(--birthday-white);
+  color: var(--birthday-ink);
+  font-size: 13px;
+  box-shadow: 0 3px 0 var(--birthday-ink);
+}
+
+.replay-button:hover {
+  background: var(--birthday-pink-soft);
+}
+
+.sound-toggle-button {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid var(--birthday-ink);
+  border-radius: 7px;
+  background: var(--birthday-white);
+  color: var(--birthday-ink);
+  box-shadow: 0 3px 0 var(--birthday-ink);
+}
+
+.sound-toggle-button:hover {
+  background: var(--birthday-pink-soft);
+}
+
+.confetti-field {
+  position: absolute;
+  inset: 8% 4% 13%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: 5%;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  animation: confetti-fall 4.5s ease-in-out infinite;
+}
+
+.confetti-piece--1 {
+  left: 12%;
+  background: var(--birthday-cheek);
+  animation-delay: -2.1s;
+}
+.confetti-piece--2 {
+  left: 27%;
+  background: var(--birthday-yellow);
+  animation-delay: -0.7s;
+}
+.confetti-piece--3 {
+  left: 43%;
+  background: var(--birthday-mint);
+  animation-delay: -3.2s;
+}
+.confetti-piece--4 {
+  left: 60%;
+  background: var(--birthday-lilac);
+  animation-delay: -1.3s;
+}
+.confetti-piece--5 {
+  left: 76%;
+  background: var(--birthday-pink);
+  animation-delay: -2.8s;
+}
+.confetti-piece--6 {
+  left: 90%;
+  background: var(--birthday-mint);
+  animation-delay: -0.2s;
+}
+.confetti-piece--2,
+.confetti-piece--5 {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.confetti-piece:nth-child(2n) {
+  top: 28%;
+}
+.confetti-piece:nth-child(3n) {
+  top: 62%;
+}
+
+@keyframes doodle-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-7deg);
+  }
+  50% {
+    transform: translateY(-9px) rotate(9deg);
+  }
+}
+
+@keyframes cake-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-0.4deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(0.4deg);
+  }
+}
+
+@keyframes candle-flicker {
+  0% {
+    transform: rotate(-5deg) scale(1, 1.02);
+  }
+  100% {
+    transform: rotate(4deg) scale(0.94, 1.08);
+  }
+}
+
+@keyframes flame-out {
+  to {
+    opacity: 0;
+    transform: scale(0.18, 0.3) translateY(15px);
+  }
+}
+
+@keyframes smoke-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  30% {
+    opacity: 0.65;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-34px) translateX(8px);
+  }
+}
+
+@keyframes character-bounce {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(1deg);
+  }
+}
+
+@keyframes confetti-fall {
+  0%,
+  100% {
+    transform: translateY(-15px) rotate(-30deg);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.95;
+  }
+  82% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(540px) rotate(220deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .birthday-screen {
+    min-height: 100svh;
+    padding: 34px 23px 28px;
+  }
+
+  .birthday-stamp {
+    width: 66px;
+    height: 66px;
+  }
+
+  .welcome-copy {
+    margin-top: 22px;
+  }
+
+  .welcome-form {
+    gap: 19px;
+    margin-top: 28px;
+  }
+
+  .welcome-sparkle--left {
+    top: 16%;
+    left: 6%;
+  }
+  .welcome-sparkle--right {
+    top: 23%;
+    right: 6%;
+  }
+
+  .birthday-cake-screen {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .cake-art-wrap {
+    width: min(94vw, 350px);
+  }
+
+  .birthday-surprise-screen {
+    padding-top: 27px;
+    padding-bottom: 28px;
+  }
+
+  .character-wrap {
+    width: min(59vw, 230px);
+    margin-top: 9px;
+  }
+
+  .surprise-copy h1 {
+    font-size: clamp(2.15rem, 10vw, 2.7rem);
+  }
+}
+
+@media (max-height: 700px) {
+  .birthday-screen {
+    min-height: 700px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
