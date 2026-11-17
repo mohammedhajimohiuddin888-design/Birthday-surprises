@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { canStartCelebration, getCakePhaseAtTime } from "@/lib/birthday-flow";
+import {
+  COUNTDOWN_BLOW_MUSIC_SRC,
+  SURPRISE_BIRTHDAY_MUSIC_SRC,
+  canStartCelebration,
+  getCakePhaseAtTime,
+} from "@/lib/birthday-flow";
 
 describe("birthday entry requirements", () => {
   it("requires a birthday type and a non-empty name before celebration", () => {
@@ -15,7 +20,14 @@ describe("birthday entry requirements", () => {
 });
 
 describe("cake countdown and candle blow timeline", () => {
-  it("counts 4, 3, 2, 1 before blowing out the candle at 3.7s", () => {
+  it("uses separate audio tracks for countdown/blow and the Happy Birthday surprise", () => {
+    expect(COUNTDOWN_BLOW_MUSIC_SRC).toBe("/assets/aistudio/birthday_music_86bccdfd.mp3");
+    expect(SURPRISE_BIRTHDAY_MUSIC_SRC).toBe(
+      "/assets/aistudio/happy_birthday_phrase_4x_78ea5586.mp3",
+    );
+  });
+
+  it("counts 4, 3, 2, 1 during the chimes before blowing out the candle at 3.7s", () => {
     expect(getCakePhaseAtTime(0)).toEqual({
       countdown: 4,
       candleOut: false,
@@ -38,13 +50,13 @@ describe("cake countdown and candle blow timeline", () => {
     });
   });
 
-  it("blows out the candle at 3.7s and reveals the surprise at 6.35s", () => {
+  it("plays the candle blow-out at 3.7s and switches to Happy Birthday surprise at 6.25s", () => {
     expect(getCakePhaseAtTime(3700)).toEqual({
       countdown: 0,
       candleOut: true,
       revealSurprise: false,
     });
-    expect(getCakePhaseAtTime(6350)).toEqual({
+    expect(getCakePhaseAtTime(6250)).toEqual({
       countdown: 0,
       candleOut: true,
       revealSurprise: true,

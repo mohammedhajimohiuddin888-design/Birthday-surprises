@@ -4,7 +4,8 @@ import { Check, RotateCcw, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  BIRTHDAY_MUSIC_SRC,
+  COUNTDOWN_BLOW_MUSIC_SRC,
+  SURPRISE_BIRTHDAY_MUSIC_SRC,
   canStartCelebration,
   getCakePhaseAtTime,
   type BirthdayType,
@@ -48,35 +49,68 @@ function BirthdayExperience() {
   const [countdown, setCountdown] = useState(4);
   const [candleOut, setCandleOut] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const countdownAudioRef = useRef<HTMLAudioElement | null>(null);
+  const surpriseAudioRef = useRef<HTMLAudioElement | null>(null);
+  const stageRef = useRef<BirthdayStage>("welcome");
+  const isMutedRef = useRef(false);
   const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    stageRef.current = stage;
+  }, [stage]);
+
+  useEffect(() => {
+    isMutedRef.current = isMuted;
+  }, [isMuted]);
 
   useEffect(() => {
     if (stage !== "cake") return;
 
+    let transitioned = false;
     const startedAt = performance.now();
     const syncPhase = () => {
-      const audio = audioRef.current;
+      if (transitioned) return;
+
+      const countdownAudio = countdownAudioRef.current;
       const audioPlaying =
-        audio !== null && !audio.paused && !audio.ended && audio.currentTime > 0.05;
-      const elapsedMs = audioPlaying ? audio.currentTime * 1000 : performance.now() - startedAt;
+        countdownAudio !== null &&
+        !countdownAudio.paused &&
+        !countdownAudio.ended &&
+        countdownAudio.currentTime > 0.05;
+      const elapsedMs = audioPlaying
+        ? countdownAudio.currentTime * 1000
+        : performance.now() - startedAt;
       const phase = getCakePhaseAtTime(elapsedMs);
 
       setCountdown(phase.countdown);
       setCandleOut(phase.candleOut);
 
       if (phase.revealSurprise) {
+        transitioned = true;
+        if (countdownAudio) {
+          countdownAudio.pause();
+          countdownAudio.currentTime = 0;
+        }
+        const surpriseAudio = surpriseAudioRef.current;
+        if (surpriseAudio) {
+          surpriseAudio.currentTime = 0;
+          surpriseAudio.muted = isMutedRef.current;
+          void surpriseAudio.play().catch(() => {
+            // Surprise screen remains visible even if browser blocks audio.
+          });
+        }
+        stageRef.current = "surprise";
         setStage("surprise");
       }
     };
 
     const timer = window.setInterval(syncPhase, 50);
-    const audio = audioRef.current;
-    audio?.addEventListener("timeupdate", syncPhase);
+    const countdownAudio = countdownAudioRef.current;
+    countdownAudio?.addEventListener("timeupdate", syncPhase);
 
     return () => {
       window.clearInterval(timer);
-      audio?.removeEventListener("timeupdate", syncPhase);
+      countdownAudio?.removeEventListener("timeupdate", syncPhase);
     };
   }, [stage]);
 
@@ -85,35 +119,65 @@ function BirthdayExperience() {
     if (!canStartCelebration(birthdayType, name)) return;
     setCountdown(4);
     setCandleOut(false);
+    stageRef.current = "cake";
 
-    const audio = audioRef.current;
-    if (audio) {
-      audio.currentTime = 0;
-      audio.muted = isMuted;
-      void audio.play().catch(() => {
+    const countdownAudio = countdownAudioRef.current;
+    if (countdownAudio) {
+      countdownAudio.currentTime = 0;
+      countdownAudio.muted = isMutedRef.current;
+      void countdownAudio.play().catch(() => {
         // Fallback timer drives the countdown if browser playback is blocked.
       });
+    }
+
+    // Unlock the surprise audio inside the same user gesture so it plays reliably after the blow-out.
+    const surpriseAudio = surpriseAudioRef.current;
+    if (surpriseAudio) {
+      surpriseAudio.muted = true;
+      surpriseAudio.currentTime = 0;
+      void surpriseAudio
+        .play()
+        .then(() => {
+          if (stageRef.current !== "surprise") {
+            surpriseAudio.pause();
+            surpriseAudio.currentTime = 0;
+          }
+          surpriseAudio.muted = isMutedRef.current;
+        })
+        .catch(() => {
+          surpriseAudio.muted = isMutedRef.current;
+        });
     }
 
     setStage("cake");
   }
 
   function replay() {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.pause();
-      audio.currentTime = 0;
+    const countdownAudio = countdownAudioRef.current;
+    if (countdownAudio) {
+      countdownAudio.pause();
+      countdownAudio.currentTime = 0;
+    }
+    const surpriseAudio = surpriseAudioRef.current;
+    if (surpriseAudio) {
+      surpriseAudio.pause();
+      surpriseAudio.currentTime = 0;
     }
     setCountdown(4);
     setCandleOut(false);
+    stageRef.current = "welcome";
     setStage("welcome");
   }
 
   function toggleMute() {
     setIsMuted((prev) => {
       const next = !prev;
-      if (audioRef.current) {
-        audioRef.current.muted = next;
+      isMutedRef.current = next;
+      if (countdownAudioRef.current) {
+        countdownAudioRef.current.muted = next;
+      }
+      if (surpriseAudioRef.current) {
+        surpriseAudioRef.current.muted = next;
       }
       return next;
     });
@@ -124,7 +188,18 @@ function BirthdayExperience() {
   return (
     <main className="birthday-page min-h-screen overflow-hidden bg-background text-foreground">
       <div className="birthday-paper" aria-hidden="true" />
-      <audio ref={audioRef} src={BIRTHDAY_MUSIC_SRC} preload="auto" muted={isMuted} />
+      <audio
+        ref={countdownAudioRef}
+        src={COUNTDOWN_BLOW_MUSIC_SRC}
+        preload="auto"
+        muted={isMuted}
+      />
+      <audio
+        ref={surpriseAudioRef}
+        src={SURPRISE_BIRTHDAY_MUSIC_SRC}
+        preload="auto"
+        muted={isMuted}
+      />
       {stage !== "welcome" && (
         <Button
           type="button"
